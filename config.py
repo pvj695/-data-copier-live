@@ -19,4 +19,3 @@ DB_DETAILS = {
     }
 }
 
-data-copier-live-env
