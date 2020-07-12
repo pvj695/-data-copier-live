@@ -1,16 +1,25 @@
-from mysql import connector as mc
-from mysql.connector import errorcode as ec
+from __future__ import print_function
+from datetime import date, datetime, timedelta
+import mysql.connector
 
-from config import DB_DETAILS
+cnx = mysql.connector.connect(user='root', database='sakila',password='9494695539')
+cursor = cnx.cursor()
 
-db_details = DB_DETAILS['dev']
+tomorrow = datetime.now().date() + timedelta(days=1)
 
-source_db = db_details['SOURCE_DB']
-print(source_db)
+add_employee = ("INSERT INTO employees "
+               "(first_name, last_name, hire_date, gender, birth_date) "
+               "VALUES (%s, %s, %s, %s, %s)")
 
-print(source_db['DB_USER'],source_db['DB_PASS'],source_db['DB_HOST'], source_db['DB_NAME'])
+data_employee = ('Geert', 'Vanderkelen', tomorrow, 'M', date(1977, 6, 14))
 
-connection = mc.connect(user=source_db['DB_USER'],password=source_db['DB_PASS'],host= source_db['DB_HOST'], database=source_db['DB_NAME'])
+# Insert new employee
+cursor.execute(add_employee, data_employee)
+emp_no = cursor.lastrowid
 
-cursor = connection.cursor()
 
+# Make sure data is committed to the database
+cnx.commit()
+
+cursor.close()
+cnx.close()
